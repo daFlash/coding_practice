@@ -1,0 +1,192 @@
+Threads - Monitors - Locks
+Creating threads in Java is as simple as instantiating a class but the main issue with threads
+is not about creating them but on how to use them correctly without causing integrity violations.
+
+public class CreatesimpleThread{
+
+    private static void log(final String message) {
+        System.out.printf("%tT [%s] %s%n", System.currentTimeMillis(), Thread.currentThread().getName()
+			, message);
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        CreateSimpleThread.log("Main Thread start");
+
+	final Thread t = new Thread("MyThread") {
+	    @Override
+	    public void run() {
+		CreateSimpleThread.log("Hello from thread");
+	    }
+	};
+	t.start();
+	CreateSimpleThread.log("Waiting for thread to finish");
+	t.join();
+	CreateSimpleThread.log("Done");
+    }
+
+
+Two simple way to create a thread within a class :
+
+[1]
+final Thread t = new Thread("MyThread") {
+    @Override
+    public void run() {
+        log("I am in the sub-thread called MyThread");
+    }
+}
+t.start();
+t.join();
+
+[2]
+final Runnable r = new Runnable() {
+    @Override
+    public void run() {
+        log("my sub-thread called MyThread");
+    }
+}
+final Thread t = new Thread(r, "MyThread");
+t.start();
+
+
+Analogy:
+Let's assume a group of people sitting and talking at the same time.
+The end result will be bits and pieces of the message by each person. This is integrity 
+violation.
+How do we fix the above issue?
+We introduce a concept of microphone where there is only one and the person who's got it
+can only speak.
+What if two independent groups that have no connection with eachother want to talk at the same time.
+
+Person -> Thread here
+Microphone -> Monitor
+Person who has the microphone is said to have the lock on the monitor.
+
+integrity violation of an object == illegal (unexpected) state of object.
+
+Persons/Threads are trying to modify the same object concurrently
+Acquisition of a monitor is called a Lock
+Monitor is an object used to control who goes next in the threads
+
+Non-Thread safe implementation
+When multiple threads access this class, it might give a false impression that it is all good.
+But it is not actually.
+
+public class SimpleCounter {
+    private int value = 0;
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(final int v) {
+	value = v;
+    }
+
+    public void incrementValue() {
+	value ++;
+    }
+
+    public String toString() {
+	return String.valueOf(value);
+    }
+}
+
+Thread safe Implementation is as follows
+
+public class ThreadSafeSimpleCounter {
+    private int value = 0;
+    public synchronized int getValue() { return value; }
+    public synchronized void setValue(int v) { value = v; }
+    public synchronized void incrementValue() { value ++; }
+    @Override
+    public String toString() { return String.valueOf(value); }
+}
+
+synchronized(monitor) {
+    method body
+}
+In this case the monitor is --> This class itself
+
+synchronized(this) {
+//method body
+}
+
+Each object of class will behave like a Monitor.
+If there are two objects of the above Threadsafeclass then we will have two monitors thereby
+each monitor can be locked on by two different threads concurrently.
+
+Complex Example that's going to deal with DeadLock Scenario
+
+public class ValuePair {
+
+	private int a;
+	private int b;
+
+	public synchronized void setValue(int value) {
+	    this.a = value;
+	    this.b = value;
+	}
+
+	public synchronized void copy (ValuePair other) {
+	  synchronized(other) {
+	    this.a = other.a;
+	    this.b = other.b;
+	  } // Will this solve the problem? described below due to copy method issue, NOOP!
+		// It will basically result in a deadlock.
+	}
+	public synchronized String toString() {
+	    return String.format("a: %d and b: %d", a, b);
+	}
+}
+
+
+//Usage of the above class
+
+ValuePair obj1 = new valuePair();
+obj1.setValue(1);
+
+ValuePair obj2 = new ValuePair();
+obj2.setValue(2);
+
+final Thread t1 = new Thread("Thread1") {
+  public void run() {
+    obj1.copy(obj2);
+  }
+}
+
+final Thread t2 = new Thread("Thread2") {
+  public void run() {
+    obj2.copy(obj1);
+  }
+}
+
+t1.start();
+t2.start();
+
+t1.join();
+t2.join();
+
+sysout(obj1)
+
+
+If a method is going to have two locks at a given point in time, it can result in a deadlock.
+
+Reentrant lock where a thread holding a lock on the monitor can hold multiple locks
+
+public class ReentrantLocks {
+
+  public synchronized void a() {
+    sysout("In a");
+    b();
+  }
+  public synchronized void b() {
+    sysout("In B");
+    c();
+  }
+  public synchronized void c() {
+    sysout("In c");
+  }
+}
+
+
+
