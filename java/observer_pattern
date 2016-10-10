@@ -1,0 +1,96 @@
+Observer Pattern
+
+One of the most commonly used patterns in the JDK. 
+If you want to keep objects informed at runtime about what those objects actually care about, there comes
+your Observer Pattern.
+
+Real Life examples:
+Imagine a class that ensures it handles Certificate Revocation Lists on the go.
+Imagine a class that is going to respond to the config changes w/o restarting the app.
+Newspaper / magazine subscription working and RSS feeds :)
+
+
+Basically, we are talking about publisher subscriber model where publisher is the Subject.
+Subscriber is the listener or the observer that's going to get the info about what changed.
+The subscribers must first register or subscribe to the Publisher/Subject.
+
+Observer pattern is also called as One-to-many dependency among objects where if one object's
+state is changed, all of its dependents are notified and updated automatically.
+
+
+Interfaces
+
+public interface ConfigManager {
+  public void registerObserver(ConfigClient obj);
+  public void removeObserver(ConfigClient obj);
+  public void notifyObservers();
+}
+
+public interface ConfigClient {
+  public void update(String host, int port);
+}
+
+public interface DisplayUpdate {
+  public void display();
+}
+
+Implementations
+
+public class CofigManagerImpl implements ConfigManager {
+  private ArrayList observers;
+  private String host;
+  private int port;
+
+  public ConfigManagerImpl() {
+    observers = new ArrayList();
+  }
+
+  public void registerObserver(ConfigClient obj) {
+    observers.add(obj);
+  }
+
+  public void removeObserver(ConfigClient obj) {
+    int index = observers.indexOf(obj);
+    if (index >= 0 ) observers.remove(index);
+  }
+
+  public void notifyObservers() {
+    for (int i = 0; i < observers.size(); i++) {
+      Observer observer = (Observer) observers.get(i);
+      observer.update(host, port);
+    }
+  }
+
+  public onConfigChange() {
+    notifyObservers();
+  }
+
+  public void setConfigValues(String host, int port) {
+    this.host = host;
+    this.port = port;
+    onConfigChange();
+  }
+}
+
+
+public class ConfigClientImpl implements ConfigClient, DisplayUpdate {
+
+  private String host;
+  private int port;
+  private ConfigManager configManager;
+
+  public ConfigClientImpl(ConfigManager configManager) {
+    configManager.registerObserver(this);
+  }
+
+  public void update(String host, int port) {
+    this.host = host;
+    this.port = port;
+  }
+  public void display() {
+    sysout("Host:" + host + "port:" + port);
+  }
+
+}
+
+
