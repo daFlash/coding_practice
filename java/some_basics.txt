@@ -1,0 +1,34 @@
+valueOf in Java
+
+Any parameter passed to valueOf will give you back the String representation of that data.
+boolean b = true;
+String.valueOf(b) --> "true"
+
+Format specifiers in Java
+Use %n instead of \n because %n in platform independent. \n is for Unix Systems and \r\n is for Windows and \r is for Mac.
+
+OS Schedulers examples--
+First In First Out 
+Priority Based Pre-emptive Scheduling
+Shortest Remaining time
+Round Robin scheduling
+
+Wait() Sleep() and Yield()
+All these methods finally boils down to the OS's scheduler which hands out timeslices for processes and threads.
+
+sleep(n) - I am done with my timeslice but don't give me another timeslice for atleast n milliseconds.
+sleep will not release the locks it has acquired, its basically for time synchronization.
+sleep is static method and will always be called on the executing thread. 
+t.thread() will never work as expected and will be invoke on the running thread itself.
+thread/interrupt analogy === wait() notify() analogy
+
+yield() - I am done with my timeslice and I still have more work to do. The OS's scheduler can give the same thread or give another thread
+
+wait() - I am done with my timeslice and dont give me another till someother thread calls notify().
+Wait will release the locks it has acquired. 
+It's for multi-threaded synchronization. notify() needs to be called by another thread for this thread to start executing again.
+
+volatile keyword is an additional complement to synchronized keyword. When a synchronized method is working on a variable(shared resource)
+each thread should always read the value of that variable from the main memory and not from the threads working memory cache.
+
+
