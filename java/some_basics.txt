@@ -31,4 +31,9 @@ It's for multi-threaded synchronization. notify() needs to be called by another 
 volatile keyword is an additional complement to synchronized keyword. When a synchronized method is working on a variable(shared resource)
 each thread should always read the value of that variable from the main memory and not from the threads working memory cache.
 
+Autoboxing is the process of conversion of primitive types to corresponding object wrapper classes.
+FOr example from int to Integer , char to Character
+Integer provides a lot of methods and functionalities on the primitive integer that's going to be stored along.
+The reverse process is called Unboxing.
+
 
