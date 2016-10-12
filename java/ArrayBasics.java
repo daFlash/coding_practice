@@ -14,6 +14,30 @@ public class ArraysBasics {
 		}
 		return "The Min is" + min + "and the max is " + max;
 	}
+	
+	public static int[] reverse1(int[] list) {
+		int reversed[] = new int[list.length];
+		for (int i=0, j=reversed.length - 1; i < list.length; i++, j--) {
+			reversed[j] = list[i];
+		}
+		return reversed;
+	}
+	
+	public static int[] reverse2(int[] list) {
+		int result[] = new int[list.length];
+		int j = 0;
+		for (int i = list.length - 1; i >= 0; i--) {
+			result[j] = list[i];
+			j++;
+		}
+		return result;
+	}
+	
+	public static void printArray(int[] toBePrinted) {
+		for (int elements: toBePrinted) {
+			System.out.println(elements);
+		}
+	}
 
 	public static void main(String[] args) {
 		int arr[];
@@ -64,7 +88,7 @@ public class ArraysBasics {
 		System.out.println("Min is " + min + "\nThe max is " + max);
 		
 		// Call the function to do the same
-		System.out.println(getMinMax(a));
+		System.out.println(getMinMax(new int[] {3, 7, 8 ,1, 0}));
 		
 		// For each loops traversing
 		double[] myarray = {5.0, 7.0, 1.0, 3.0, 9.0};
@@ -72,6 +96,10 @@ public class ArraysBasics {
 		for (double elem: myarray) {
 			System.out.println(elem);
 		}
+		
+		printArray(reverse1(new int[] {1,2,3,4,5}));
+		printArray(reverse2(new int[] {1,2,3,4,5}));
+		
 	}
 
 }
